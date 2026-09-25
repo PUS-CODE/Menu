@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { MOCK_RESTAURANTS } from '@/lib/mock-data';
-import { ArrowRight, QrCode, Smartphone } from 'lucide-react';
+import { ArrowRight, QrCode, Smartphone, Settings } from 'lucide-react';
 
 export default function HomePage() {
   const restaurants = Object.values(MOCK_RESTAURANTS).map((item) => item.restaurant);
@@ -18,14 +18,35 @@ export default function HomePage() {
             Multi-Restaurant Platform
           </h1>
           <p className="text-xs text-stone-500 leading-relaxed max-w-xs mx-auto">
-            Select a sample restaurant below to test the white-label customer menu view.
+            Select a sample restaurant below or open the Admin Panel to manage menus.
           </p>
         </div>
+
+        {/* Launch Admin Panel Banner */}
+        <Link
+          href="/admin"
+          className="flex items-center justify-between p-4 rounded-2xl bg-stone-900 text-white hover:bg-stone-800 transition-all shadow-md group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-600 flex items-center justify-center text-white shrink-0">
+              <Settings className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-white group-hover:text-amber-400 transition-colors">
+                Launch Admin Panel
+              </h2>
+              <p className="text-[11px] text-stone-400">
+                Manage restaurants, categories, prices &amp; dishes
+              </p>
+            </div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-stone-400 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
+        </Link>
 
         {/* Demo Restaurants List */}
         <div className="space-y-3">
           <h2 className="text-xs font-bold text-stone-400 uppercase tracking-wider">
-            Active Demo Restaurants
+            Active Demo Customer Menus
           </h2>
 
           {restaurants.map((rest) => (
@@ -60,7 +81,7 @@ export default function HomePage() {
             <span>NFC / QR Dynamic Route Architecture</span>
           </div>
           <p className="text-[11px] text-stone-400 leading-normal">
-            Customers scanning NFC chips or QR codes are routed directly to <code className="text-amber-300">/menu/[restaurantSlug]</code>. The system dynamically loads that restaurant&apos;s branding, colors, categories, and menu items.
+            Customers scanning NFC chips or QR codes are routed directly to <code className="text-amber-300">/menu/[restaurantSlug]</code>. The system dynamically loads that restaurant&apos;s branding, colors, categories, and menu items managed in <code className="text-amber-300">/admin</code>.
           </p>
         </div>
       </div>
