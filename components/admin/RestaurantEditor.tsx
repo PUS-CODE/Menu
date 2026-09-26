@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Restaurant } from '@/lib/types';
 import { Save, Trash2, Palette, MapPin, Phone, Clock, Globe } from 'lucide-react';
+import { ImageUploader } from '@/components/ui/ImageUploader';
 import { ImageWithFallback } from '@/components/ui/ImageWithFallback';
 
 interface Props {
@@ -170,27 +171,23 @@ export const RestaurantEditor: React.FC<Props> = ({
           />
         </div>
 
-        <div>
-          <label className="block font-bold text-stone-800 mb-1">Logo Image URL</label>
-          <input
-            type="url"
-            name="logo"
+        {/* Logo Image Uploader */}
+        <div className="sm:col-span-2 border-t border-stone-100 pt-2">
+          <ImageUploader
+            label="Restaurant Logo Photo (Upload File or Paste URL)"
             value={formData.logo}
-            onChange={handleChange}
-            placeholder="https://..."
-            className="w-full p-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/40 text-stone-900"
+            onChange={(newUrl) => setFormData((prev) => ({ ...prev, logo: newUrl }))}
+            fallbackText="Logo"
           />
         </div>
 
-        <div>
-          <label className="block font-bold text-stone-800 mb-1">Cover Image URL</label>
-          <input
-            type="url"
-            name="cover_image"
+        {/* Cover Image Uploader */}
+        <div className="sm:col-span-2 border-t border-stone-100 pt-2">
+          <ImageUploader
+            label="Restaurant Cover Banner Photo (Upload File or Paste URL)"
             value={formData.cover_image}
-            onChange={handleChange}
-            placeholder="https://..."
-            className="w-full p-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/40 text-stone-900"
+            onChange={(newUrl) => setFormData((prev) => ({ ...prev, cover_image: newUrl }))}
+            fallbackText="Cover Banner"
           />
         </div>
 

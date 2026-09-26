@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { MenuItem, Category, FoodType } from '@/lib/types';
-import { X, Save, Sparkles, Flame, CheckCircle2 } from 'lucide-react';
+import { X, Save, Sparkles, Flame } from 'lucide-react';
+import { ImageUploader } from '@/components/ui/ImageUploader';
 import { ImageWithFallback } from '@/components/ui/ImageWithFallback';
 
 interface Props {
@@ -139,7 +140,7 @@ export const MenuItemModal: React.FC<Props> = ({
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-4 sm:p-5 overflow-y-auto space-y-4 text-xs">
-          {/* Live Image Preview */}
+          {/* Live Image Preview Header */}
           <div className="flex items-center gap-4 p-3 bg-stone-50 rounded-xl border border-stone-200">
             <div className="relative h-20 w-20 rounded-xl overflow-hidden bg-stone-200 border border-stone-300 shrink-0">
               <ImageWithFallback
@@ -209,6 +210,16 @@ export const MenuItemModal: React.FC<Props> = ({
               />
             </div>
 
+            {/* Food Image Upload Component */}
+            <div className="sm:col-span-2 border-t border-stone-100 pt-2">
+              <ImageUploader
+                label="Food Item Picture (Upload File or Paste URL)"
+                value={formData.image || ''}
+                onChange={(newUrl) => setFormData({ ...formData, image: newUrl })}
+                fallbackText={formData.name || 'Dish Photo'}
+              />
+            </div>
+
             <div>
               <label className="block font-bold text-stone-800 mb-1">Price (₹) *</label>
               <input
@@ -266,17 +277,6 @@ export const MenuItemModal: React.FC<Props> = ({
                 <option value={2}>2 - Medium 🌶️🌶️</option>
                 <option value={3}>3 - Hot 🌶️🌶️🌶️</option>
               </select>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="block font-bold text-stone-800 mb-1">Food Image URL</label>
-              <input
-                type="url"
-                placeholder="https://images.unsplash.com/..."
-                value={formData.image || ''}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                className="w-full p-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/40 text-stone-900"
-              />
             </div>
 
             <div className="sm:col-span-2">

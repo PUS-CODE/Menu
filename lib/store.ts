@@ -95,7 +95,7 @@ export function getRestaurantBySlugFromStore(slug: string): RestaurantData | nul
   return { restaurant, categories, menuItems };
 }
 
-export function saveRestaurant(restaurant: Restaurant): Restaurant {
+export async function saveRestaurant(restaurant: Restaurant): Promise<Restaurant> {
   const data = getStoredData();
   const existingIdx = data.restaurants.findIndex((r) => r.id === restaurant.id);
 
@@ -106,15 +106,37 @@ export function saveRestaurant(restaurant: Restaurant): Restaurant {
   }
 
   saveStoredData(data);
+
+  // Sync to Vercel Server API & Supabase
+  if (typeof window !== 'undefined') {
+    try {
+      await fetch('/api/restaurants', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(restaurant),
+      });
+    } catch (e) {
+      console.warn('API sync failed:', e);
+    }
+  }
+
   return restaurant;
 }
 
-export function deleteRestaurant(id: string): void {
+export async function deleteRestaurant(id: string): Promise<void> {
   const data = getStoredData();
   data.restaurants = data.restaurants.filter((r) => r.id !== id);
   data.categories = data.categories.filter((c) => c.restaurant_id !== id);
   data.menuItems = data.menuItems.filter((m) => m.restaurant_id !== id);
   saveStoredData(data);
+
+  if (typeof window !== 'undefined') {
+    try {
+      await fetch(`/api/restaurants?id=${id}`, { method: 'DELETE' });
+    } catch (e) {
+      console.warn('API delete failed:', e);
+    }
+  }
 }
 
 // --- CATEGORY CRUD ---
@@ -125,7 +147,7 @@ export function getCategoriesByRestaurant(restaurantId: string): Category[] {
     .sort((a, b) => a.sort_order - b.sort_order);
 }
 
-export function saveCategory(category: Category): Category {
+export async function saveCategory(category: Category): Promise<Category> {
   const data = getStoredData();
   const existingIdx = data.categories.findIndex((c) => c.id === category.id);
 
@@ -136,14 +158,35 @@ export function saveCategory(category: Category): Category {
   }
 
   saveStoredData(data);
+
+  if (typeof window !== 'undefined') {
+    try {
+      await fetch('/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(category),
+      });
+    } catch (e) {
+      console.warn('API sync failed:', e);
+    }
+  }
+
   return category;
 }
 
-export function deleteCategory(id: string): void {
+export async function deleteCategory(id: string): Promise<void> {
   const data = getStoredData();
   data.categories = data.categories.filter((c) => c.id !== id);
   data.menuItems = data.menuItems.filter((m) => m.category_id !== id);
   saveStoredData(data);
+
+  if (typeof window !== 'undefined') {
+    try {
+      await fetch(`/api/categories?id=${id}`, { method: 'DELETE' });
+    } catch (e) {
+      console.warn('API delete failed:', e);
+    }
+  }
 }
 
 // --- MENU ITEM CRUD ---
@@ -154,7 +197,7 @@ export function getMenuItemsByRestaurant(restaurantId: string): MenuItem[] {
     .sort((a, b) => a.sort_order - b.sort_order);
 }
 
-export function saveMenuItem(item: MenuItem): MenuItem {
+export async function saveMenuItem(item: MenuItem): Promise<MenuItem> {
   const data = getStoredData();
   const existingIdx = data.menuItems.findIndex((m) => m.id === item.id);
 
@@ -165,20 +208,53 @@ export function saveMenuItem(item: MenuItem): MenuItem {
   }
 
   saveStoredData(data);
+
+  if (typeof window !== 'undefined') {
+    try {
+      await fetch('/api/menu-items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item),
+      });
+    } catch (e) {
+      console.warn('API sync failed:', e);
+    }
+  }
+
   return item;
 }
 
-export function toggleMenuItemAvailable(id: string): void {
+export async function toggleMenuItemAvailable(id: string): Promise<void> {
   const data = getStoredData();
   const item = data.menuItems.find((m) => m.id === id);
   if (item) {
     item.available = !item.available;
     saveStoredData(data);
+
+    if (typeof window !== 'undefined') {
+      try {
+        await fetch('/api/menu-items', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id }),
+        });
+      } catch (e) {
+        console.warn('API sync failed:', e);
+      }
+    }
   }
 }
 
-export function deleteMenuItem(id: string): void {
+export async function deleteMenuItem(id: string): Promise<void> {
   const data = getStoredData();
   data.menuItems = data.menuItems.filter((m) => m.id !== id);
   saveStoredData(data);
+
+  if (typeof window !== 'undefined') {
+    try {
+      await fetch(`/api/menu-items?id=${id}`, { method: 'DELETE' });
+    } catch (e) {
+      console.warn('API delete failed:', e);
+    }
+  }
 }
